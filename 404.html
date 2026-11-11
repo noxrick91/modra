@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title data-i18n="notfound.title">Page not found · Modra</title>
+<meta name="robots" content="noindex">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" id="favicon" href="assets/img/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" id="site-css" href="assets/css/site.css">
+<style>
+  /* Fallback until the site stylesheet is found (the host serves this page at any depth). */
+  :where(body) { margin: 0; font-family: system-ui, sans-serif; background: #f5f7fa; color: #0f1722; }
+  @media (prefers-color-scheme: dark) { :where(body) { background: #0d1117; color: #e7ecf2; } }
+</style>
+<script>
+(function () {
+  var d = document.documentElement, s = null, l = null;
+  try { s = localStorage.getItem("modra-theme"); } catch (e) {}
+  if (s === "light" || s === "dark") d.setAttribute("data-theme", s);
+  try { l = new URLSearchParams(location.search).get("lang"); } catch (e) {}
+  if (!l) { try { l = localStorage.getItem("modra-lang"); } catch (e) {} }
+  if (!l) l = navigator.language || "";
+  if (/^zh/i.test(l)) {
+    d.classList.add("i18n-pending");
+    setTimeout(function () { d.classList.remove("i18n-pending"); }, 1500);
+  }
+})();
+</script>
+</head>
+<body>
+<a class="skip-link" href="#main" data-i18n="nav.skip">Skip to content</a>
+<header class="site-header">
+  <div class="wrap header-row">
+    <a class="brand" href="./" data-home aria-label="Modra">
+      <svg class="brand-mark" viewBox="0 0 64 64" width="28" height="28" aria-hidden="true" focusable="false"><rect width="64" height="64" rx="14" fill="var(--mark-bg, #13294b)"/><g fill="none" stroke="var(--mark-ink, #e8eef7)" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round"><path d="M32 10 51 21v22L32 54 13 43V21z"/><path d="M13 21l19 11 19-11M32 32v22"/></g><circle cx="32" cy="32" r="5.5" fill="var(--signal, #f08a24)"/></svg>
+      <span class="brand-name">Modra</span>
+    </a>
+    <div class="header-tools">
+      <button type="button" class="tool-btn" id="lang-toggle" hidden lang="zh-CN">中文</button>
+      <button type="button" class="tool-btn icon-btn" id="theme-toggle" hidden aria-label="Switch to dark theme">
+        <svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6"/></svg>
+        <svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M20 14.6A8.2 8.2 0 0 1 9.4 4a8.2 8.2 0 1 0 10.6 10.6z"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+<main id="main" tabindex="-1">
+  <section class="hero notfound">
+    <div class="wrap">
+      <p class="eyebrow">404</p>
+      <h1 data-i18n="notfound.heading">This page does not exist</h1>
+      <p class="lede" data-i18n="notfound.text">The link may be out of date, or the address may have a typo.</p>
+      <p class="cta-row"><a class="btn btn-primary" href="./" data-home data-i18n="notfound.home">Back to the home page</a></p>
+    </div>
+  </section>
+</main>
+<script>
+/* Find the site root (the site may live in a sub-folder or at the top of its domain),
+   then load the shared stylesheet and scripts from there. Same-origin requests only. */
+(function () {
+  var dirs = location.pathname.split("/");
+  dirs.pop();
+  var candidates = [];
+  for (var i = dirs.length; i >= 1; i--) candidates.push(dirs.slice(0, i).join("/") + "/");
+  function use(root) {
+    document.getElementById("site-css").href = root + "assets/css/site.css";
+    document.getElementById("favicon").href = root + "assets/img/favicon.svg";
+    document.querySelectorAll("[data-home]").forEach(function (a) { a.href = root; });
+    ["site.config.js", "assets/js/site.js"].forEach(function (src) {
+      var s = document.createElement("script");
+      s.src = root + src;
+      s.async = false;
+      document.body.appendChild(s);
+    });
+  }
+  function tryAt(k) {
+    if (k >= candidates.length) { document.documentElement.classList.remove("i18n-pending"); return; }
+    fetch(candidates[k] + "site.config.js", { method: "HEAD", cache: "no-store" })
+      .then(function (r) { if (r.ok) use(candidates[k]); else tryAt(k + 1); })
+      .catch(function () { tryAt(k + 1); });
+  }
+  tryAt(0);
+})();
+</script>
+</body>
+</html>

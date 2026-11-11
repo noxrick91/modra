@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title data-i18n="meta.title">Modra · Parametric CAD in Rust</title>
+<meta name="description" data-i18n-content="meta.description" content="Modra is a parametric CAD modeler written in Rust, on an in-house geometry kernel. Exact B-rep kernel in development toward milestone M1.">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#f5f7fa" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0d1117" media="(prefers-color-scheme: dark)">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Modra">
+<meta property="og:title" data-i18n-content="meta.title" content="Modra · Parametric CAD in Rust">
+<meta property="og:description" data-i18n-content="meta.description" content="Modra is a parametric CAD modeler written in Rust, on an in-house geometry kernel. Exact B-rep kernel in development toward milestone M1.">
+<meta property="og:image" content="assets/img/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" data-i18n-content="meta.ogAlt" content="Modra sketch editor with dimensions and constraints">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="zh_CN">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/css/site.css">
+<script>
+/* Before first paint: stored theme, motion flag, and a short hide while a translation loads. */
+(function () {
+  var d = document.documentElement, s = null, l = null;
+  try { s = localStorage.getItem("modra-theme"); } catch (e) {}
+  if (s === "light" || s === "dark") d.setAttribute("data-theme", s);
+  d.classList.add("js");
+  if (!(window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches)) {
+    d.classList.add("motion");
+    /* Safety: if the site script never runs, drop the reveal styling so nothing stays hidden. */
+    setTimeout(function () { if (!window.ModraReveal) d.classList.remove("motion"); }, 3000);
+  }
+  try { l = new URLSearchParams(location.search).get("lang"); } catch (e) {}
+  if (!l) { try { l = localStorage.getItem("modra-lang"); } catch (e) {} }
+  if (!l) l = navigator.language || "";
+  if (/^zh/i.test(l)) {
+    d.classList.add("i18n-pending");
+    setTimeout(function () { d.classList.remove("i18n-pending"); }, 1500);
+  }
+})();
+</script>
+<script src="site.config.js" defer></script>
+<script src="assets/js/site.js" defer></script>
+<script src="assets/js/part.js" defer></script>
+<script src="assets/js/kernel.js" defer></script>
+</head>
+<body>
+<a class="skip-link" href="#main" data-i18n="nav.skip">Skip to content</a>
+<div class="grid-bg" aria-hidden="true"></div>
+
+<header class="site-header">
+  <div class="wrap header-row">
+    <a class="brand" href="#top" aria-label="Modra">
+      <svg class="brand-mark" viewBox="0 0 64 64" aria-hidden="true" focusable="false"><rect width="64" height="64" rx="14" fill="var(--mark-bg)"/><g fill="none" stroke="var(--mark-ink)" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round"><path d="M32 10 51 21v22L32 54 13 43V21z"/><path d="M13 21l19 11 19-11M32 32v22"/></g><circle cx="32" cy="32" r="5.5" fill="var(--signal)"/></svg>
+      <span class="brand-name">Modra</span>
+    </a>
+    <nav class="site-nav" aria-label="Main" data-i18n-aria-label="nav.label">
+      <ul>
+        <li><a href="#capabilities" data-i18n="nav.capabilities">Capabilities</a></li>
+        <li><a href="#kernel" data-i18n="nav.kernel">Kernel</a></li>
+        <li><a href="#gallery" data-i18n="nav.gallery">Gallery</a></li>
+      </ul>
+    </nav>
+    <div class="header-tools">
+      <button type="button" class="tool-btn" id="lang-toggle" hidden lang="zh-CN">中文</button>
+      <button type="button" class="tool-btn icon-btn" id="theme-toggle" hidden aria-label="Switch to dark theme">
+        <svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6"/></svg>
+        <svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M20 14.6A8.2 8.2 0 0 1 9.4 4a8.2 8.2 0 1 0 10.6 10.6z"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main id="main" tabindex="-1">
+
+  <section class="hero" id="top" aria-labelledby="hero-title">
+    <div class="wrap hero-grid">
+      <div class="hero-text">
+        <h1 id="hero-title">Modra</h1>
+        <p class="lede" data-i18n="hero.lede">Parametric CAD, written in Rust from the geometry kernel up.</p>
+        <p class="status-line"><span class="badge badge-signal" data-i18n="status.inDevelopment">In development</span> <span data-i18n="hero.status">Exact B-rep kernel · milestone M1 · Linux</span></p>
+        <p class="cta-row"><a class="btn btn-primary" href="#kernel" data-i18n="hero.cta">Kernel roadmap</a></p>
+      </div>
+      <figure class="part-box">
+        <img class="part-fallback" src="assets/img/part.svg" width="600" height="600" alt="Wireframe of a flange: a disc with six bolt holes, a raised hub with a chamfered top and a through bore." data-i18n-alt="hero.partAlt">
+        <canvas id="part-canvas" role="img" aria-label="Rotating wireframe of a flange: a disc with a bolt circle of holes, a raised hub with a chamfered top and a through bore." data-i18n-aria-label="hero.partLabel"></canvas>
+        <figcaption class="part-note" data-i18n="hero.partNote">A generic flange, drawn by this page.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="section demo" id="parametric" aria-labelledby="demo-title">
+    <div class="wrap demo-grid">
+      <div class="reveal">
+        <p class="eyebrow" data-i18n="demo.eyebrow">Parametric</p>
+        <h2 id="demo-title" data-i18n="demo.title">Change a value. The model follows.</h2>
+        <svg class="dim-accent" viewBox="0 0 160 12" aria-hidden="true" focusable="false"><path d="M1 1v10M159 1v10M1 6h158"/><path class="ah" d="M1 6l7-3v6zM159 6l-7-3v6z"/></svg>
+        <div class="demo-controls" hidden>
+          <label for="in-holes"><span data-i18n="demo.holes">Holes</span> <output id="out-holes" for="in-holes">6</output></label>
+          <input type="range" id="in-holes" min="3" max="12" step="1" value="6">
+          <label for="in-bcd"><span data-i18n="demo.bcd">Bolt circle Ø (mm)</span> <output id="out-bcd" for="in-bcd">72</output></label>
+          <input type="range" id="in-bcd" min="62" max="84" step="2" value="72">
+        </div>
+        <p class="muted small" data-i18n="demo.note">An illustration drawn by this page: the sketch and the 3D part above share these two parameters.</p>
+      </div>
+      <figure class="sketch reveal">
+        <svg viewBox="-66 -66 160 146" role="img" aria-label="Top-view sketch of the flange with a bolt circle dimension and a hole callout." data-i18n-aria-label="demo.sketchLabel">
+          <g class="sk-construct">
+            <path d="M-58 0H58M0 -58V58"/>
+            <circle id="sk-bcd" r="36"/>
+          </g>
+          <g class="sk-edges">
+            <circle r="50"/>
+            <circle r="48.5" class="thin"/>
+            <circle r="22"/>
+            <circle r="20" class="thin"/>
+            <circle r="12"/>
+            <g id="sk-holes"><circle cx="36" cy="0" r="4"/><circle cx="18" cy="-31.18" r="4"/><circle cx="-18" cy="-31.18" r="4"/><circle cx="-36" cy="0" r="4"/><circle cx="-18" cy="31.18" r="4"/><circle cx="18" cy="31.18" r="4"/></g>
+          </g>
+          <g class="sk-dims">
+            <path id="sk-bcd-dim" d="M-36 4V66M36 4V66M-36 62H36M-36 62l5 -2v4zM36 62l-5 -2v4z"/>
+            <text id="sk-bcd-text" x="0" y="74" text-anchor="middle">Ø72</text>
+            <path id="sk-leader" d="M39 -3L49 -24H66"/>
+            <text id="sk-callout-text" x="49" y="-27">6 × Ø8</text>
+          </g>
+        </svg>
+      </figure>
+    </div>
+  </section>
+
+  <section class="section" id="capabilities" aria-labelledby="cap-title">
+    <div class="wrap">
+      <div class="reveal">
+        <p class="eyebrow" data-i18n="cap.eyebrow">Capabilities</p>
+        <h2 id="cap-title" data-i18n="cap.title">In the desktop app today</h2>
+        <svg class="dim-accent" viewBox="0 0 160 12" aria-hidden="true" focusable="false"><path d="M1 1v10M159 1v10M1 6h158"/><path class="ah" d="M1 6l7-3v6zM159 6l-7-3v6z"/></svg>
+      </div>
+      <ul class="cards">
+        <li class="card reveal"><h3 data-i18n="cap.history.title">Parametric history</h3><p data-i18n="cap.history.text">Edit a dimension; everything downstream rebuilds.</p></li>
+        <li class="card reveal"><h3 data-i18n="cap.sketch.title">Sketch and constrain</h3><p data-i18n="cap.sketch.text">Dimensions and constraints, typed on the canvas.</p></li>
+        <li class="card reveal"><h3 data-i18n="cap.part.title">Part features</h3><p data-i18n="cap.part.text">Extrude, revolve, holes, patterns, fillets, shell.</p></li>
+        <li class="card reveal"><h3 data-i18n="cap.assembly.title">Assemblies</h3><p data-i18n="cap.assembly.text">Mates, motion, exploded views and a bill of materials.</p></li>
+        <li class="card reveal"><h3 data-i18n="cap.drawing.title">Drawings</h3><p data-i18n="cap.drawing.text">Projected, section and detail views, out to PDF and SVG.</p></li>
+        <li class="card reveal"><h3 data-i18n="cap.material.title">Materials</h3><p data-i18n="cap.material.text">A 104-entry library, kept as plain JSON.</p></li>
+        <li class="card reveal"><h3 data-i18n="cap.versions.title">Versions</h3><p data-i18n="cap.versions.text">Named versions, branches and three-way merge.</p></li>
+        <li class="card reveal"><h3 data-i18n="cap.exchange.title">Interchange</h3><p data-i18n="cap.exchange.text">STEP AP242, DXF, STL, glTF and GLB.</p></li>
+        <li class="card reveal"><h3 data-i18n="cap.cli.title">CLI and MCP</h3><p data-i18n="cap.cli.text">The same engine, from scripts and AI agents.</p></li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="kernel-band" id="kernel" aria-labelledby="kernel-title">
+    <div class="wrap">
+      <div class="kernel-grid">
+        <div class="kernel-head reveal">
+          <p class="eyebrow" data-i18n="kernel.eyebrow">Kernel</p>
+          <h2 id="kernel-title" data-i18n="kernel.title">An exact B‑rep kernel, written in-house</h2>
+          <svg class="dim-accent" viewBox="0 0 160 12" aria-hidden="true" focusable="false"><path d="M1 1v10M159 1v10M1 6h158"/><path class="ah" d="M1 6l7-3v6zM159 6l-7-3v6z"/></svg>
+          <p class="kernel-lede" data-i18n="kernel.lede">Every face an exact surface, every edge an exact curve. Pure Rust, in development toward milestone M1.</p>
+        </div>
+        <figure class="kv reveal">
+          <div class="kv-stage">
+            <img class="kv-fallback" src="assets/img/kernel.svg" width="800" height="500" alt="Wireframe of a stepped shaft with a cross hole; the two closed curves where the hole meets the shaft are drawn in orange." data-i18n-alt="kernel.vizAlt">
+            <canvas id="kernel-canvas" role="img" aria-label="A stepped shaft with a cross hole. A pen traces the exact intersection of the two cylinders; an inset shows the same curves on the unrolled hole." data-i18n-aria-label="kernel.vizLabel"></canvas>
+          </div>
+          <figcaption class="kv-note" data-i18n="kernel.vizNote">Cylinder meets cylinder: the exact intersection curve, drawn by this page.</figcaption>
+        </figure>
+      </div>
+      <ul class="stats reveal">
+        <li><strong class="stat-n">10<sup>&minus;<span data-count="6" data-from="1">6</span></sup> mm</strong><span data-i18n="kernel.stat1">modeling tolerance: one nanometre</span></li>
+        <li><strong class="stat-n">&plusmn;<span data-count="500">500</span> m</strong><span data-i18n="kernel.stat2">model space on each axis</span></li>
+        <li><strong class="stat-n"><span data-count="99.6">99.6</span> %</strong><span data-i18n="kernel.stat3">of 512 test STEP files imported, with 0 crashes</span></li>
+        <li><strong class="stat-n">0</strong><span data-i18n="kernel.stat4">wrong answers in 250,120 inside/outside tests on 561 real STEP files</span></li>
+      </ul>
+      <p class="kicker" id="track-title" data-i18n="kernel.pathLabel">Path to milestone M1</p>
+      <ol class="milestones reveal" aria-labelledby="track-title">
+        <li class="ms done"><strong data-i18n="kernel.ms0">Exact core</strong><span data-i18n="kernel.ms0sub">In place</span></li>
+        <li class="ms"><strong data-i18n="kernel.ms1">Booleans</strong><span data-i18n="kernel.ms1sub">Holes, split</span></li>
+        <li class="ms"><strong data-i18n="kernel.ms2">Cross holes</strong><span data-i18n="kernel.ms2sub">Quadric intersections</span></li>
+        <li class="ms"><strong data-i18n="kernel.ms3">Mirror, patterns</strong><span data-i18n="kernel.ms3sub">Feature and path patterns</span></li>
+        <li class="ms"><strong data-i18n="kernel.ms4">Fillets, chamfers</strong><span data-i18n="kernel.ms4sub">Constant radius</span></li>
+        <li class="ms"><strong data-i18n="kernel.ms5">Shell</strong><span data-i18n="kernel.ms5sub">Exact offsets</span></li>
+        <li class="ms goal"><strong>M1</strong><span data-i18n="kernel.goalSub">Machined-part set</span><span class="badge badge-signal" data-i18n="status.inDevelopment">In development</span></li>
+      </ol>
+      <p class="legend reveal"><span class="dot dot-done"></span><span data-i18n="kernel.legendDone">in place</span> <span class="dot"></span><span data-i18n="kernel.legendPlanned">planned, in this order</span></p>
+      <div class="scope reveal">
+        <p class="kicker" id="surf-title" data-i18n="kernel.surfacesLabel">M1 surfaces</p>
+        <ul class="chips chips-surf" aria-labelledby="surf-title">
+          <li><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M2.5 17.5 7 6.5h14.5L17 17.5z"/><path class="iso" d="M12 6.5 7.5 17.5M4.8 12h14.4"/></svg><span data-i18n="kernel.s1">Plane</span></li>
+          <li><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><ellipse cx="12" cy="5.5" rx="7" ry="2.5"/><path d="M5 5.5v13a7 2.5 0 0 0 14 0v-13"/><path class="iso" d="M12 8v13M5 12a7 2.5 0 0 0 14 0"/></svg><span data-i18n="kernel.s2">Cylinder</span></li>
+          <li><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 2.5 4.5 18.5M12 2.5l7.5 16"/><ellipse cx="12" cy="18.5" rx="7.5" ry="2.6"/><path class="iso" d="M12 2.5v18.6M7.7 11.5a4.3 1.5 0 0 0 8.6 0"/></svg><span data-i18n="kernel.s3">Cone</span></li>
+          <li><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.5"/><path class="iso" d="M3.5 12a8.5 3 0 0 0 17 0M12 3.5a3.4 8.5 0 0 0 0 17"/></svg><span data-i18n="kernel.s4">Sphere</span></li>
+          <li><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><ellipse cx="12" cy="12" rx="10" ry="6"/><path d="M7.5 11.6a5 2 0 0 0 9 0M8.8 12.6a4 1.6 0 0 1 6.4 0"/><path class="iso" d="M12 6v3.3M12 14.3V18"/></svg><span data-i18n="kernel.s5">Torus</span></li>
+        </ul>
+        <p class="kicker" id="ops-title" data-i18n="kernel.opsLabel">M1 operations</p>
+        <ul class="chips" aria-labelledby="ops-title"><li data-i18n="kernel.o1">Extrude</li><li data-i18n="kernel.o2">Revolve</li><li data-i18n="kernel.o3">Booleans</li><li data-i18n="kernel.o4">Holes</li><li data-i18n="kernel.o5">Split</li><li data-i18n="kernel.o6">Mirror</li><li data-i18n="kernel.o7">Patterns</li><li data-i18n="kernel.o8">Fillets</li><li data-i18n="kernel.o9">Chamfers</li><li data-i18n="kernel.o10">Shell</li><li data-i18n="kernel.o11">Exact STEP export</li></ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="gallery" aria-labelledby="gallery-title">
+    <div class="wrap">
+      <div class="reveal">
+        <p class="eyebrow" data-i18n="gallery.eyebrow">Gallery</p>
+        <h2 id="gallery-title" data-i18n="gallery.title">From the GUI test suite</h2>
+        <svg class="dim-accent" viewBox="0 0 160 12" aria-hidden="true" focusable="false"><path d="M1 1v10M159 1v10M1 6h158"/><path class="ah" d="M1 6l7-3v6zM159 6l-7-3v6z"/></svg>
+      </div>
+      <ul class="gallery">
+        <li class="reveal"><figure><a class="shot" href="assets/img/shots/sketch-edit-1440.webp"><img src="assets/img/shots/sketch-edit-720.webp" width="720" height="450" loading="lazy" decoding="async" alt="Sketch editor: a rectangle and a circle with 40, 24 and 6 millimetre dimensions, and a list of horizontal, vertical and fixed-point constraints." data-i18n-alt="gallery.sketch.alt"></a><figcaption data-i18n="gallery.sketch.caption">Sketch with dimensions and constraints</figcaption></figure></li>
+        <li class="reveal"><figure><a class="shot" href="assets/img/shots/drawing-annotated-1440.webp"><img src="assets/img/shots/drawing-annotated-720.webp" width="720" height="450" loading="lazy" decoding="async" alt="Drawing sheet of an L-shaped bracket: projected and isometric views, section A-A, detail B at 2:1, dimensions, notes and a title block." data-i18n-alt="gallery.drawing.alt"></a><figcaption data-i18n="gallery.drawing.caption">Drawing with section and detail views (Chinese UI)</figcaption></figure></li>
+        <li class="reveal"><figure><a class="shot" href="assets/img/shots/sketch-3d-1440.webp"><img src="assets/img/shots/sketch-3d-720.webp" width="720" height="450" loading="lazy" decoding="async" alt="A sketch with two circles viewed in 3D, its radius and distance dimensions drawn on the sketch plane." data-i18n-alt="gallery.sketch3d.alt"></a><figcaption data-i18n="gallery.sketch3d.caption">A sketch viewed in 3D (Chinese UI)</figcaption></figure></li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="section section-follow" id="follow" aria-labelledby="follow-title" data-config-section="updatesUrl" hidden>
+    <div class="wrap follow reveal">
+      <h2 id="follow-title" data-i18n="follow.title">Follow updates</h2>
+      <a class="btn btn-primary" data-config-href="updatesUrl" href="#follow" data-i18n="follow.link">Follow Modra</a>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="wrap footer-row">
+    <p><strong>Modra</strong> · <span data-i18n="footer.tagline">Parametric CAD in Rust</span></p>
+    <p class="muted" data-i18n="footer.privacy">No cookies, nothing loaded from other servers.</p>
+    <p class="muted" data-i18n="footer.rights">Commercial software. All rights reserved.</p>
+    <p class="muted" data-config-text="copyright" hidden></p>
+    <p class="lang-links"><a href="?lang=en" hreflang="en" lang="en">English</a> · <a href="?lang=zh-CN" hreflang="zh-CN" lang="zh-CN">简体中文</a></p>
+  </div>
+</footer>
+
+<dialog class="lightbox" id="lightbox" aria-label="Screenshot viewer" data-i18n-aria-label="lightbox.label">
+  <div class="lb-inner">
+    <img class="lb-img" alt="" width="1440" height="900">
+    <p class="lb-caption"></p>
+    <div class="lb-controls">
+      <button type="button" class="tool-btn" data-lb="prev" data-i18n="lightbox.prev">Previous</button>
+      <span class="lb-count" aria-live="polite"></span>
+      <button type="button" class="tool-btn" data-lb="next" data-i18n="lightbox.next">Next</button>
+      <button type="button" class="tool-btn" data-lb="close" data-i18n="lightbox.close">Close</button>
+    </div>
+  </div>
+</dialog>
+</body>
+</html>
